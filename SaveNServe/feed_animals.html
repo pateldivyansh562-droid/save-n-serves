@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Feed Animals — Save N Serve</title><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <div class="container">
+    <nav class="nav"><div class="brand"><div class="logo"><a href="index.html"><img src="assets/logo.jpg" alt="logo"></a></div><div class="title"><h1>Feed Animals</h1><p>Redirect non-human food</p></div></div>
+      <div style="display:flex;gap:10px;align-items:center"><a href="index.html" class="nav-links">Home</a><a href="dashboard.html" class="nav-links">Dashboard</a></div></nav>
+
+    <div class="card" style="max-width:720px;margin:18px auto">
+      <h2>Feed Animal Shelters</h2>
+      <form id="feedForm" class="form">
+        <input name="source" class="input" placeholder="Source / Donor name" />
+        <input name="qty" class="input" placeholder="Quantity (plates/kg)" />
+        <input name="location" class="input" placeholder="Pickup location" />
+        <div style="display:flex;gap:8px"><button class="btn" type="submit">Send to Shelter</button><a class="btn alt" href="index.html">Cancel</a></div>
+      </form>
+    </div>
+  </div>
+<script src="scripts/app.js"></script>
+</body>
+</html>

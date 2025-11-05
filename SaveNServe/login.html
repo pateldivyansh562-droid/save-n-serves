@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Login — Save N Serve</title><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">
+        <div class="logo"><a href="index.html"><img src="assets/logo.jpg" alt="logo"></a></div>
+        <div class="title"><h1>Save N Serve</h1><p>Waste less • Feed more</p></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <a href="index.html" class="nav-links">Home</a>
+        <a href="signup.html" class="nav-links">Sign Up</a>
+      </div>
+    </nav>
+
+    <div class="card" style="max-width:480px;margin:28px auto">
+      <h2>Login</h2>
+      <form id="loginForm" class="form">
+        <input id="loginUser" class="input" placeholder="username" required>
+        <input id="loginPass" type="password" class="input" placeholder="password" required>
+        <div style="display:flex;gap:8px"><button class="btn" type="submit">Login</button><a href="index.html" class="btn alt">Continue as guest</a></div>
+      </form>
+      <p class="small" style="margin-top:8px">Demo credentials: student1/1234 staff/1234 ngo1/1234</p>
+    </div>
+  </div>
+<script>
+// --- MODIFIED SCRIPT ---
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    
+    const result = await response.json();
+    
+    if (response.ok) {
+      // Login successful
+      alert('Welcome ' + result.user.name);
+      // Optional: Save a token or user info in localStorage/sessionStorage
+      // localStorage.setItem('sns_user', JSON.stringify(result.user));
+      window.location.href = 'dashboard.html';
+    } else {
+      // Login failed (e.g., 401 Unauthorized)
+      alert(result.message || 'Invalid credentials (use demo accounts or sign up)');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('An error occurred during login. Please try again.');
+  }
+});
+</script>
+<script src="scripts/app.js"></script> </body>
+</html>

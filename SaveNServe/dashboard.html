@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Dashboard — Save N Serve</title><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand"><div class="logo"><a href="index.html"><img src="assets/logo.jpg" alt="logo"></a></div><div class="title"><h1>Save N Serve</h1><p id="userBadge">Dashboard</p></div></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="nav-links"><a href="index.html">Home</a><a href="donate.html">Donate</a><a href="request.html">Request</a><a href="map.html">Map</a><a href="awareness.html">Awareness</a></div>
+        <button id="themeBtn" class="theme-toggle">Toggle</button>
+        <a href="login.html" class="btn" id="logoutLink">Logout</a>
+      </div>
+    </nav>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Overview</h2>
+      <div class="grid">
+        <div class="card"><div class="small">Meals Saved</div><div class="h1" id="mealsSaved">0</div></div>
+        <div class="card"><div class="small">Active Donations</div><div class="h1" id="donationsCount">0</div></div>
+        <div class="card"><div class="small">Requests</div><div class="h1" id="requestsCount">0</div></div>
+        <div class="card"><div class="small">Event Donations</div><div class="h1" id="eventsCount">0</div></div>
+      </div>
+
+      <div style="margin-top:12px" class="card">
+        <h4>Recent Donations</h4>
+        <div id="recentList"></div>
+      </div>
+    </div>
+
+    <footer class="footer">Demo Dashboard • Data from backend</footer>
+  </div>
+
+<script src="scripts/app.js"></script>
+<script>
+// --- MODIFIED SCRIPT ---
+document.addEventListener('DOMContentLoaded', async function(){
+  // renderDashboard() is already called by app.js
+  
+  // populate recent list
+  const rl = document.getElementById('recentList');
+  rl.innerHTML = '<p>Loading recent donations...</p>';
+  
+  try {
+    const response = await fetch('/api/recent-donations');
+    if (!response.ok) throw new Error('Failed to fetch');
+    
+    const donations = await response.json();
+    rl.innerHTML = ''; // Clear loading message
+    
+    if (donations.length === 0) {
+      rl.innerHTML = '<p>No recent donations found.</p>';
+      return;
+    }
+    
+    donations.forEach(it => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.style.marginTop = '8px';
+      // Format timestamp
+      const time = new Date(it.created_at).toLocaleString();
+      div.innerHTML = `<strong>${it.donor_name}</strong> — ${it.quantity} plates • <span class="small">${it.location} • ${time}</span>`;
+      rl.appendChild(div);
+    });
+    
+  } catch (error) {
+    console.error("Error fetching recent donations:", error);
+    rl.innerHTML = '<p style="color:red;">Could not load recent donations.</p>';
+  }
+
+  // logout link simulation (clears any stored user info)
+  document.getElementById('logoutLink').addEventListener('click', (e) => {
+    // Optional: Clear any user session data
+    // localStorage.removeItem('sns_user');
+    // sessionStorage.removeItem('sns_user');
+    // No preventDefault, just let it navigate to login.html
+  });
+});
+</script>
+</body>
+</html>
