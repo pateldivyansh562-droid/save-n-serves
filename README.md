@@ -21,10 +21,9 @@ It connects restaurants, event organizers, and individuals who have extra food w
 | Layer | Technology |
 |:------|:------------|
 | Frontend | HTML, CSS, JavaScript (React optional) |
-| Backend | Node.js / Express |
-| Database | Supabase / PostgreSQL |
-| Hosting | GitHub Pages / Vercel / Render |
-| Authentication | Supabase Auth / JWT |
+| Backend | Flask|
+| Database | MySQL |
+| Hosting | GitHub mysql / JWT |
 | APIs | Google Maps API (for location) |
 🧩 Folder Structure
 save-n-serves/
