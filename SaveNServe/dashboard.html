@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><title>Dashboard — Save N Serve</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+      .status-badge { padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; text-transform: uppercase; }
+      .acc { background: var(--accent); } .dec { background: #d32f2f; }
+      .btn-act { padding: 5px 10px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; color:white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">
+        <div class="logo"><a href="index.html"><img src="assets/logo.jpg" alt="logo"></a></div>
+        <div class="title"><h1>Dashboard</h1><p id="roleLabel">Loading...</p></div>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="donate.html" id="lnk-don" style="display:none">Donate Food</a>
+        <a href="request.html" id="lnk-req" style="display:none">Request Food</a>
+        <button onclick="logout()" class="btn alt" style="padding:6px 12px">Logout</button>
+      </div>
+    </nav>
+
+    <div class="grid" style="margin-top:20px">
+      <div class="card"><div class="small">Total Meals Saved</div><div class="h1" id="stat-meals">-</div></div>
+      <div class="card"><div class="small">Pending Donations</div><div class="h1" id="stat-don">-</div></div>
+      <div class="card"><div class="small">Pending Requests</div><div class="h1" id="stat-req">-</div></div>
+    </div>
+
+    <div id="ngo-view" class="card" style="margin-top:20px; display:none; border-top:4px solid var(--accent)">
+      <h3>Available Donations</h3>
+      <p class="small">Accept donations from Mess Staff to claim them.</p>
+      <div id="ngo-list" style="display:flex; flex-direction:column; gap:10px; margin-top:15px"></div>
+    </div>
+
+    <div id="staff-view" class="card" style="margin-top:20px; display:none; border-top:4px solid var(--gold)">
+      <h3>Pending Requests</h3>
+      <p class="small">Accept food requests from NGOs to fulfill them.</p>
+      <div id="staff-list" style="display:flex; flex-direction:column; gap:10px; margin-top:15px"></div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3>Recent Activity History</h3>
+      <div id="act-list" style="display:flex; flex-direction:column; gap:10px; margin-top:15px"></div>
+    </div>
+  </div>
+
+<script src="scripts/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const userStr = localStorage.getItem('sns_user');
+    if(!userStr) { window.location.href = 'login.html'; return; }
+    const user = JSON.parse(userStr);
+    document.getElementById('roleLabel').textContent = user.name + " (" + user.role.toUpperCase() + ")";
+
+    if(user.role === 'ngo') {
+        document.getElementById('lnk-req').style.display = 'inline';
+        document.getElementById('ngo-view').style.display = 'block';
+        loadItems('/api/ngo/pending', 'ngo-list', 'donation');
+    } else if (user.role === 'staff') {
+        document.getElementById('lnk-don').style.display = 'inline';
+        document.getElementById('staff-view').style.display = 'block';
+        loadItems('/api/staff/pending', 'staff-list', 'food_request');
+    }
+
+    loadStats(); loadActivity();
+});
+
+async function loadStats() {
+    const s = await apiCall('/api/stats');
+    document.getElementById('stat-meals').textContent = s.meals;
+    document.getElementById('stat-don').textContent = s.p_don;
+    document.getElementById('stat-req').textContent = s.p_req;
+}
+
+async function loadActivity() {
+    const d = await apiCall('/api/activity');
+    const el = document.getElementById('act-list');
+    el.innerHTML = d.length ? '' : '<p class="small">No history yet.</p>';
+    d.forEach(i => {
+        el.innerHTML += `
+        <div style="display:flex; justify-content:space-between; padding:10px; background:var(--bg); border-radius:8px; align-items:center">
+             <div><strong>${i.type}</strong>: ${i.quantity} plates from ${i.name} <div class="small">${i.location} • ${new Date(i.created_at).toLocaleDateString()}</div></div>
+             <span class="status-badge ${i.status==='accepted'?'acc':'dec'}">${i.status}</span>
+        </div>`
+    });
+}
+
+async function loadItems(url, elId, type) {
+    const d = await apiCall(url);
+    const el = document.getElementById(elId);
+    el.innerHTML = d.length ? '' : '<p class="small">Nothing pending right now.</p>';
+    d.forEach(i => {
+        // For NGOs seeing donations, show donor_name. For Staff seeing requests, show name.
+        const name = i.donor_name || i.name; 
+        el.innerHTML += `
+        <div class="card" style="padding:15px; display:flex; justify-content:space-between; align-items:center">
+            <div><strong>${name}</strong> <span class="small">(${i.quantity} plates)</span><div class="small">${i.location}</div></div>
+            <div style="display:flex; gap:8px">
+                <button onclick="setStatus(${i.id}, '${type}', 'accepted')" class="btn-act acc">Accept</button>
+                <button onclick="setStatus(${i.id}, '${type}', 'declined')" class="btn-act dec">Decline</button>
+            </div>
+        </div>`
+    });
+}
+
+async function setStatus(id, type, status) {
+    await apiCall('/api/update-status', 'POST', {id, type, status});
+    window.location.reload();
+}
+
+function logout() { localStorage.removeItem('sns_user'); window.location.href='login.html'; }
+</script>
+</body>
+</html>

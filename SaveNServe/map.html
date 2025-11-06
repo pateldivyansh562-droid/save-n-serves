@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Map Tracker — Save N Serve</title><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <div class="container">
+    <nav class="nav"><div class="brand"><div class="logo"><a href="index.html"><img src="assets/logo.jpg" alt="logo"></a></div><div class="title"><h1>Map Tracker</h1><p>Find NGOs & shelters</p></div></div>
+      <div style="display:flex;gap:10px;align-items:center"><a href="dashboard.html" class="nav-links">Dashboard</a><a href="index.html" class="nav-links">Home</a></div></nav>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Nearby NGOs & Shelters</h2>
+      <div id="map" class="map" style="margin-top:8px"></div>
+      <p class="small" style="margin-top:8px">This uses Google Maps JS API if you supply a key in scripts/config.js</p>
+    </div>
+  </div>
+  <!-- load Google Maps only if key replaced in config.js -->
+  <script src="scripts/config.js"></script>
+  <script>
+    if(window && typeof GOOGLE_MAPS_API_KEY !== 'undefined' && GOOGLE_MAPS_API_KEY !== "REPLACE_WITH_REAL_KEY"){
+      const s = document.createElement('script');
+      s.src = 'https://maps.googleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=initMap';
+      s.defer = true; s.async = true; document.head.appendChild(s);
+    }
+  </script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Request Food — Save N Serve</title><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="stylesheet" href="styles.css"></head>
+<body>
+  <div class="container">
+    <nav class="nav"><div class="brand"><div class="logo"><a href="index.html"><img src="assets/logo.jpg" alt="logo"></a></div><div class="title"><h1>Request Food</h1><p>NGOs & volunteers</p></div></div>
+      <div style="display:flex;gap:10px;align-items:center"><a href="dashboard.html" class="nav-links">Dashboard</a><a href="map.html" class="nav-links">Map</a></div></nav>
+
+    <div class="card" style="max-width:720px;margin:18px auto">
+      <h2>Request Pickup</h2>
+      <form id="requestForm" class="form">
+        <input name="name" class="input" placeholder="Your name / NGO" />
+        <input name="org" class="input" placeholder="Organization (if any)" />
+        <input name="qty" class="input" placeholder="Quantity needed" type="number"/>
+        <input name="location" class="input" placeholder="Pickup location" />
+        <div style="display:flex;gap:8px"><button class="btn" type="submit">Submit Request</button><a class="btn alt" href="dashboard.html">Back</a></div>
+      </form>
+    </div>
+  </div>
+<script src="scripts/app.js"></script>
+</body>
+</html>
